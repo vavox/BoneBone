@@ -1,0 +1,30 @@
+﻿  Draw.cpp
+  Engine.cpp
+F:\New_Folder\Diploma_Game\Game\Game\Engine.cpp(19,52): warning C4244: аргумент: преобразование "T" в "unsigned int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+F:\New_Folder\Diploma_Game\Game\Game\Engine.cpp(19,38): warning C4244: аргумент: преобразование "T" в "unsigned int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+  Update.cpp
+  character.cpp
+F:\New_Folder\Diploma_Game\Game\Game\character.cpp(128,36): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+F:\New_Folder\Diploma_Game\Game\Game\character.cpp(128,30): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+F:\New_Folder\Diploma_Game\Game\Game\character.cpp(140,14): warning C4244: return: преобразование "T" в "int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+F:\New_Folder\Diploma_Game\Game\Game\character.cpp(145,14): warning C4244: return: преобразование "T" в "int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+  input.cpp
+  main.cpp
+  Создание кода...
+  Game.vcxproj -> F:\New_Folder\Diploma_Game\Game\Debug\Game.exe
