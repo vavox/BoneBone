@@ -8,7 +8,6 @@ using namespace std;
 // // ‘ункц≥й вводу з клав≥атури (управл≥нн€)
 void Engine::input()
 {
-	cout << "input" << endl;
 	// ¬их≥д з гри/в меню паузи
 	if (Keyboard::isKeyPressed(Keyboard::Escape))
 	{
@@ -18,7 +17,6 @@ void Engine::input()
 	// –ух вл≥во
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
-		m_skell.setRot();
 		m_skell.moveleft();
 	}
 	else
@@ -29,8 +27,6 @@ void Engine::input()
 	// –ух вправо
 	if (Keyboard::isKeyPressed(Keyboard::D))
 	{
-		cout << "Pressed D" << endl;
-		m_skell.setRot();
 		m_skell.moveright();
 	}
 	else
