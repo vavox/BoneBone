@@ -29,6 +29,7 @@ private:
 	
 	bool m_onJump;
 	bool m_space;
+	bool m_onGroundAnim;
 
 	int m_life; // Кількість очків життя
 	int m_score; // Кількість очків
@@ -88,6 +89,9 @@ public:
 	void mapInteraction(float x, float y);
 	float m_X;
 	float m_Y;
-	float m_Ytemp;
+	float m_groundleft;
+	float m_groundright;
+	bool m_fall;
 	bool m_onGround;
+	bool m_canJump;
 };

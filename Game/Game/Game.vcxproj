@@ -144,7 +144,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp" />
-    <ClCompile Include="Draw.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -153,7 +152,6 @@
     <ClCompile Include="TinyXML\tinyxml.cpp" />
     <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
-    <ClCompile Include="Update.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="character.h" />
@@ -161,7 +159,6 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
-    <ClInclude Include="view.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

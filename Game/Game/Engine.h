@@ -26,8 +26,8 @@ private:
 	Level level;
 	// Функцій вводу з клавіатури (управління), оновлення кадру та виводу на екран
 	void input();
-	void update(float _time);
-	void draw(RenderWindow& window);
+	/*void update(float _time);
+	void draw(RenderWindow& window);*/
 
 
 public:

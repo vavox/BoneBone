@@ -12,7 +12,7 @@ Object player;
 skell::skell()
 {
 	// Швидкість гравця
-	m_speed = 600;
+	m_speed = 400;
 
 	// Завантаження текстури
 	m_texture.loadFromFile("res/scott2.png");
@@ -45,14 +45,16 @@ skell::skell()
 	m_score = 0;
 	// 
 	//m_groundlvl3= 600;
-	m_maxjump = 300;
+	m_maxjump = 250;
 
 	// номер кадру
 	m_Frame = 1;
 	//m_onGround = true;
 	m_onJump = false;
+	m_onGroundAnim = false;
 	m_X = 0;
 	m_Y = 0.1;
+	m_fall = true;
 }
 
 // Функція для доступу до спрайту
@@ -91,43 +93,45 @@ void skell::stopright()
 void skell::animation(float _time)
 {
 	// Анімація руху вправо, вліво та стрибка
-	if (m_right && !m_left)
+	if (m_onGroundAnim && !m_onJump)
 	{
-		m_Frame += 10 *_time;
-		//cout << "\nframe" <<_time<< endl;
-		if (m_Frame > 8) { m_Frame -= 7; }
-		m_sprite.setTextureRect(IntRect(109*int(m_Frame), 8, m_pAnimBuff, m_pHeight));
-		m_sprite.move(0.1*_time, 0);
-		//CurrnetFrame = 1;
-
-	}
-	else if (m_left && !m_right)
-	{
-		m_Frame += 10 * _time;
-		//cout << "\nframe" <<_time<< endl;
-		if (m_Frame > 8) { m_Frame -= 7; }
-		m_sprite.setTextureRect(IntRect(108 * int(m_Frame), 145, m_pAnimBuff, m_pHeight));
-		m_sprite.move(-0.1 * _time, 0);
-		//CurrnetFrame = 1;
-
-	}
-	else
-	{
-		if (!m_right)
+		if (m_right && !m_left)
 		{
-			m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+			m_Frame += 10 * _time;
+			//cout << "\nframe" <<_time<< endl;
+			if (m_Frame > 8) { m_Frame -= 7; }
+			m_sprite.setTextureRect(IntRect(109 * int(m_Frame), 8, m_pAnimBuff, m_pHeight));
+			m_sprite.move(0.1 * _time, 0);
+			//CurrnetFrame = 1;
+
 		}
-		if (!m_left)
+		else if (m_left && !m_right)
 		{
-			m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+			m_Frame += 10 * _time;
+			//cout << "\nframe" <<_time<< endl;
+			if (m_Frame > 8) { m_Frame -= 7; }
+			m_sprite.setTextureRect(IntRect(108 * int(m_Frame), 145, m_pAnimBuff, m_pHeight));
+			m_sprite.move(-0.1 * _time, 0);
+			//CurrnetFrame = 1;
+
 		}
-		if (m_right && m_left)
+		else
 		{
-			m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+			if (!m_right)
+			{
+				m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+			}
+			if (!m_left)
+			{
+				m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+			}
+			if (m_right && m_left)
+			{
+				m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+			}
 		}
 	}
-
-	if (m_onJump)
+	if (m_onJump || !m_onGround)
 	{
 		if (m_right)
 		{
@@ -149,7 +153,7 @@ void skell::animation(float _time)
 // Функція "Гравітації"
 void skell::fall(float _time)
 {
-	m_pos.y += 1.2 * m_speed * powf(_time, 0.756)* m_Y;
+	m_pos.y += 1.2 * m_speed * powf(_time, 0.656)* m_Y;
 }
 
 
@@ -161,26 +165,41 @@ void skell::not_jump()
 // Функція оновлення кадру (відбувається рух персонажу гравця)
 void skell::update(float _time)
 {
-	int temp = 0;
-	 
+	if (!m_fall)
+	{
+		m_canJump = true;
+	}
+	
+	
+
 	if (m_right)
 	{
 		m_X = 1;
 		m_pos.x += m_speed * _time * m_X;
 		
 	}
+	
 
 	if (m_left)
-	{
+	{  
 		m_X = -1;
 		m_pos.x += m_speed * _time * m_X;
 	
 	}
 	
-	if (m_space && m_onGround)
+	if (m_space && m_onGround && m_canJump)
 	{
+		if (m_right)
+		{
+			m_X = 1;
+		}
+		if (m_left)
+		{
+			m_X = -1;
+		}
 		m_onJump = true;
-		
+		m_onGroundAnim = false;
+		m_fall = true;  
 		
 		m_pos.y -= 1.2*m_speed * powf(_time, 0.987);
 		m_Y = -0.1;
@@ -188,72 +207,73 @@ void skell::update(float _time)
 		{
 			cout << m_groundlvl - m_maxjump << endl;
 			m_onGround = false;
+			m_canJump = false;
 		}
 		
 	}
-	
-	
-	/*if ((m_pos.y + m_pHeight * m_pScale < m_groundlvl)&&!m_space)
+	else
 	{
-		m_onGround = false;
+		m_canJump = false;
 	}
-	*/
+	
+	
 	//cout << "time: " << _time << endl;
 	animation(_time);
 	
 	//m_onGround = true;
 	
-
-	
-	//if (!m_onGround)
-	
-		
-		
-	fall(_time);
-		
-	mapInteraction(m_X, 0);
-	mapInteraction(0, m_Y);
-	
-		//if (m_Y != 0)
-	//if (m_Y != 0)
-	{
-		m_Y = m_Y + _time * 0.95;
-	}
-	
-	
 	if (m_onGround)
 	{
 		m_onJump = false;
-		cout << m_onGround << "|| j " << m_onJump << endl;
+		//cout << m_onGround << "|| j " << m_onJump << endl;
 	}
 	
-	m_pos.y = round(m_pos.y - 0.5);
+	if ((m_pos.x + m_pWidth * m_pScale < m_groundleft) || (m_pos.x > m_groundright))
+	{
+	
+		if (!m_fall)
+		{
+			m_Y = 0.01;  
+		}
+		m_fall = true;
+		m_onJump = true;
+		
+	}
+	m_Y = m_Y + _time * 0.95;
+
+	if (!m_onGroundAnim || m_onJump)
+	{
+		m_X = 0; 
+	}
+	
+	if (m_Y > 10)
+	{
+		m_Y = 10;
+	}
+
+	fall(_time);
+	
+	if (!m_fall)
+	{
+		m_pos.y = m_groundlvl - m_pHeight * m_pScale;
+	}
+
+	mapInteraction(m_X, 0);
+	cout << "m_Y " << m_Y << endl;
+	cout << "m_X " << m_X << endl;
+	mapInteraction(0, m_Y);
+
 
 	// Зміна позиції спрайту
 	m_sprite.setPosition(m_pos.x, m_pos.y);
-	m_score += 1;
 	
-	//fall(_time);
+	
+	m_score += 1;
+		
 }
 
 
-/*/ Віддзеркалення спрайту
-void skell::setRot()
-{
-	int temp_x = getpos_x();
-	int temp_y = getpos_y();
-	if (m_left)
-	{
-		m_sprite.setScale(-0.7, 0.7);
-		m_sprite.setPosition(temp_x-150, temp_y);
-	}
 
-	if (m_right)
-	{
-		m_sprite.setScale(0.7, 0.7);
-		m_sprite.setPosition(m_pos);
-	}
-}*/
 
 float skell::getpos_y()
 {
@@ -310,111 +330,80 @@ void skell::mapInteraction(float x, float y)
 	// Координати гравця
 	player.rect.top = m_pos.y;// m_skell.getpos_y();// -m_skell.getHeight() * m_skell.getScale();
 	player.rect.left = m_pos.x;//m_skell.getpos_x();
-	//m_skell.setpos(player.rect.left, player.rect.top);
+	
 	// Ініціалізація вектору об'єктів мапи
 
 	vector<Object> obj = level.GetObjects("solid");
 
 	for (int i = 0; i < obj.size(); i++)
 	{
-
 		if (player.rect.intersects(obj[i].rect))
 		{
 			if (obj[i].type == "ground")
 			{
 
-				//cout << m_Y << endl;
+				
 				//m_Y = round(m_Y);
 				
-				if (y > 0)
+				if ((y > 0))
 				{
+					
 					setPosY(obj[i].rect.top - player.rect.height);
+					
 					m_Y = 0;
 					m_onGround = true;
+					m_onGroundAnim = true;
+					m_fall = false;
+					m_groundleft = obj[i].rect.left;
+					m_groundright = obj[i].rect.left + obj[i].rect.width;
 					setGround(obj[i].rect.top);
+					
+					//cout << "Player top " << player.rect.top << "\nPlayer top + height - " << player.rect.top + player.rect.height << "\nObject top - " << obj[i].rect.top << endl;
+					
 				}
 				if (y < 0)
 				{
 					setPosY(obj[i].rect.top + obj[i].rect.height);
-					m_Y = 0;
+					//setPosY(obj[i].rect.top + player.rect.height);
 					m_onGround = false;
+					//m_X = 0;
+					m_Y = 0;
 				}
-				/*if (x > 0)
+				
+				if (x > 0)
+				{
+
+					
+					setPosX(obj[i].rect.left - player.rect.width);
+					m_X = 0;
+					
+				}
+				if (x < 0)
+				{
+					
+					setPosX(obj[i].rect.left + obj[i].rect.width);
+					m_X = 0;
+					
+					
+
+				}
+			}
+
+			if (obj[i].type == "wall")
+			{
+				if (x > 0)
 				{
 					setPosX(obj[i].rect.left - player.rect.width);
-
+					m_X = 0;
 				}
 				if (x < 0)
 				{
 					setPosX(obj[i].rect.left + obj[i].rect.width);
-
-				}*/
-				//cout << i << endl;
+					m_X = 0;
+				}
 				
-				if ((i > 0) && (i < obj.size()))
-				{
-					if (player.rect.intersects(obj[i + 1].rect))
-					{
-						cout << "i - 1 " << obj[i].rect.left << endl;
-						setPosX(obj[i + 1].rect.left - player.rect.width - 15);
-						
-					}
-					if (player.rect.intersects(obj[i - 1].rect))
-					{
-						
-					}
-				}
-
-
 			}
-			/*if (obj[i].type == "wall")
-			{
-				if (m_X > 0)
-				{
-					m_skell.setPosX(obj[i].rect.left - player.rect.width);
-					m_skell.m_X = 0;
-				}
-				if (m_skell.m_X < 0)
-				{
-					m_skell.setPosX(obj[i].rect.left + obj[i].rect.width);
-					m_skell.m_X = 0;
-				}
-			}*/
 		}
-		/*cout << "player top " << player.rect.top << endl;
-		cout << "obj top " << obj[i].rect.top << endl;*/
-		//cout << "map_coll" << endl;
-		//if (player.rect.left >= obj[i].rect.left)
-		//{
-		//	if (obj[i].type == "ground")
-		//	{
-		//		m_skell.setGround(obj[i].rect.top);// +obj[i].rect.height);
-		//		//groundTop = obj[i].rect.top;
-		//	}
-		//}
-		//
-
-		//if (player.rect.intersects(obj[i].rect))
-		//{
-		//	
-		//	if (obj[i].type == "ground")
-		//	{
-		//		m_skell.setGround(obj[i].rect.top);// +obj[i].rect.height);
-		//		m_skell.setPos(player.rect.left, obj[i].rect.top - m_skell.getHeight() * m_skell.getScale());
-		//		
-		//		//cout << "obj top " << player.rect.top << endl;
-		//	}
-		//	if (obj[i].type == "wall")
-		//	{
-		//		if (player.rect.left < obj[i].rect.left)
-		//		{
-		//			m_skell.setPos(obj[i].rect.left - m_skell.getWidth() * m_skell.getScale(), player.rect.top + m_skell.getHeight() * m_skell.getScale());
-		//		}
-		//		else
-		//		{
-		//			m_skell.setPos(obj[i].rect.left + obj[i].rect.width, player.rect.top + m_skell.getHeight() * m_skell.getScale());
-		//		}
-		//	}
-		//}
+		
 	}
 }

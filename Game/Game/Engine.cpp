@@ -88,7 +88,7 @@ void Engine::start()
 		// Функцій вводу з клавіатури (управління), оновлення кадру та виводу на екран
 		input();
 		
-		update(dtAsSeconds);
+		m_skell.update(dtAsSeconds);
 	
 		setPlayerView(m_skell.getpos_x(), m_skell.getpos_y());
 		m_window.setView(view);
@@ -115,7 +115,7 @@ void Engine::setPlayerView(float X, float Y)
 	float tempY = Y;
 
 	if (X < 640) { tempX = 640; }
-	if (Y > 500) { tempY = 600; }
+	if (Y > 600) { tempY = 600; }
 	//if (Y < 400) { tempY = 400; }
 	view.setCenter(tempX, tempY);
 }
