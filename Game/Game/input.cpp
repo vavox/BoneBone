@@ -4,8 +4,9 @@
 #include "Engine.h"
 #include <iostream>
 using namespace std;
+using namespace sf;
 
-// // Функцій вводу з клавіатури (управління)
+// Функцій вводу з клавіатури (управління)
 void Engine::input()
 {
 	// Вихід з гри/в меню паузи
@@ -14,34 +15,43 @@ void Engine::input()
 		m_window.close();
 	}
 
-	// Рух вліво
-	if (Keyboard::isKeyPressed(Keyboard::A))
+	if (m_skell.getLife() <= 0)
 	{
-		m_skell.moveleft();
+		if (Keyboard::isKeyPressed(Keyboard::R))
+		{
+			m_skell.toCheckpoint();
+		}
 	}
-	else
+	else//if(m_skell.getCanMove())
 	{
-		m_skell.stopleft();
-	}
+		// Рух вліво
+		if (Keyboard::isKeyPressed(Keyboard::A))
+		{
+			m_skell.moveleft();
+		}
+		else
+		{
+			m_skell.stopleft();
+		}
 
-	// Рух вправо
-	if (Keyboard::isKeyPressed(Keyboard::D))
-	{
-		m_skell.moveright();
-	}
-	else
-	{
-		m_skell.stopright();
-	}
+		// Рух вправо
+		if (Keyboard::isKeyPressed(Keyboard::D))
+		{
+			m_skell.moveright();
+		}
+		else
+		{
+			m_skell.stopright();
+		}
 
-	// Стрибок
-	if (Keyboard::isKeyPressed(Keyboard::Space))
-	{
-		m_skell.jump();
+		// Стрибок
+		if (Keyboard::isKeyPressed(Keyboard::Space))
+		{
+			m_skell.jump();
+		}
+		else
+		{
+			m_skell.not_jump();
+		}
 	}
-	else
-	{
-		m_skell.not_jump();
-	}
-
 }

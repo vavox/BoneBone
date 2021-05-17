@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="2021.02.15" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="30">
+<map version="1.5" tiledversion="2021.02.15" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="31">
  <tileset firstgid="1" source="tilesetOpenGame.tsx"/>
  <tileset firstgid="61" source="backk.tsx"/>
  <layer id="1" name="layer1" width="40" height="20">
@@ -807,15 +807,11 @@
   </data>
  </layer>
  <objectgroup id="4" name="col" offsetx="-2.66667" offsety="-2.66667">
-  <object id="3" name="solid" type="ground" x="1.19119" y="546" width="446.773" height="26.6667"/>
-  <object id="10" name="solid" type="ground" x="454.818" y="578" width="533.136" height="22.6667"/>
-  <object id="17" name="solid" type="ground" x="998.331" y="514.394" width="60.517" height="23.6063"/>
-  <object id="19" name="solid" type="ground" x="1062.55" y="450.545" width="88.8182" height="25.455"/>
-  <object id="21" name="solid" type="ground" x="1159.23" y="578.909" width="123.318" height="19.7576"/>
-  <object id="22" name="solid" type="wall" x="429" y="551.167" width="25" height="52.5"/>
-  <object id="23" name="solid" type="wall" x="988.333" y="526.333" width="35" height="74.3333"/>
-  <object id="24" name="solid" type="wall" x="1053.67" y="463.167" width="33.6667" height="74.8333"/>
-  <object id="25" name="solid" type="wall" x="1127.83" y="467.167" width="30" height="129.5"/>
+  <object id="3" name="solid" type="ground" x="1.19119" y="546" width="448.773" height="60.6667"/>
+  <object id="10" name="solid" type="ground" x="449.818" y="578" width="544.636" height="29.1667"/>
+  <object id="17" name="solid" type="ground" x="994.831" y="514.394" width="64.017" height="93.1063"/>
+  <object id="19" name="solid" type="ground" x="1059.05" y="450.545" width="95.3182" height="187.955"/>
+  <object id="21" name="solid" type="ground" x="1153.73" y="578.909" width="128.818" height="29.7576"/>
  </objectgroup>
  <objectgroup id="5" name="player">
   <object id="15" name="player" type="character" x="120.417" y="296.333" width="36.5" height="63"/>

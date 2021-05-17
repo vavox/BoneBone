@@ -11,7 +11,7 @@ using namespace std;
 using namespace sf;
 
 // Ініціалізація структури об'єкту гравця на карті
-//Object player;
+//Object player1;
 
 Engine::Engine()
 {
@@ -38,10 +38,12 @@ Engine::Engine()
 	// Створення файлу з текстури
 	m_BackgroundSprite.setTexture(m_BackgroundTexture);
 
+	font.loadFromFile("res/joystix.ttf");
+	life.setFont(font);
+	gameover.setFont(font);
+	checkp.setFont(font);
 	
 }
-
-
 
 
 void Engine::start()
@@ -51,23 +53,38 @@ void Engine::start()
 	Clock clock;
 	
 	// Завантаження карти в форматі tmx
-	level.LoadFromFile("maps/test3.tmx");
-
-	// Завантаження данних об'єкту гравця з карти
-	//player = level.GetObject("player");
+	//level.LoadFromFile("maps/test3.tmx");
+	
+		// Завантаження данних об'єкту гравця з карти
+	
 	
 	// Завантаження спрайту персонажу в об'єкт гравця
 	//player.sprite = m_skell.getSprite();
 
 	// Початковий рівень землі
-	m_skell.setGround(1000);
+	m_skell.setGround(546);
+	life.setCharacterSize(24);
+	life.setFillColor(Color::Green);
+	life.setOutlineColor(Color::Black);
+	gameover.setCharacterSize(64);
+	gameover.setFillColor(Color::Red);
+	gameover.setOutlineColor(Color::Black);
+	gameover.setString("U`r dead!");
+	checkp.setCharacterSize(24);
+	checkp.setFillColor(Color::White);
+	checkp.setOutlineColor(Color::Black);
+	checkp.setString("saved");
 
+	
 	// Стартові координати гравця
-	/*m_skell.setPosX(player.rect.left);
-	m_skell.setPosY(player.rect.top + m_skell.getHeight() * m_skell.getScale());*/
+	//m_skell.setPosX(player1.rect.left);
+	//m_skell.setPosY(player1.rect.top + m_skell.getHeight() * m_skell.getScale());
 	// Нескінченний цикл "життя" вікна
+	m_window.setFramerateLimit(120);
+	m_window.setVerticalSyncEnabled(true);
 	while (m_window.isOpen())
 	{
+		life.setString(to_string(m_skell.getLife()));
 		//player.sprite = m_skell.getSprite();
 		// Подія яка прймає стан вікна
 		Event event;
@@ -77,7 +94,10 @@ void Engine::start()
 			{
 				m_window.close();
 			}
+			// Функцій вводу з клавіатури (управління), оновлення кадру та виводу на екран
+			input();
 		}
+		
 		
 		// Перезапуск таймеру та запис часу в змінну
 		Time dt = clock.restart();
@@ -85,26 +105,45 @@ void Engine::start()
 		// Представлення виміряного часу в секундах
 		float dtAsSeconds = dt.asSeconds();
 
-		// Функцій вводу з клавіатури (управління), оновлення кадру та виводу на екран
-		input();
+		//// Функцій вводу з клавіатури (управління), оновлення кадру та виводу на екран
+		//input(event);
 		
 		m_skell.update(dtAsSeconds);
-	
+		
+		// Зміна позиції камери
 		setPlayerView(m_skell.getpos_x(), m_skell.getpos_y());
 		m_window.setView(view);
-		//Очищення екрану
+		// Очищення екрану
 		m_window.clear();
 
-		// Візуалізація фону
+		// Візуалізація фону та мапи
 		m_window.draw(m_BackgroundSprite);
-
-		level.Draw(m_window);
+		m_skell.drawlevel(m_window);
+		//level.Draw(m_window);
 		// Візуалізація персонажу гравця
 		m_window.draw(m_skell.getSprite());//player.sprite);
+		m_window.draw(life);
+
+		if (m_skell.getLife() <= 0)
+		{
+			m_window.draw(gameover);
+		}
+		if (m_skell.checkpoint())
+		{
+			m_window.draw(checkp);
+		}
+		heavy.update(dtAsSeconds);
+		heavy.draw(m_window);
+		vector<Object> obj = heavy.getEnemy(1);
+		m_skell.enemyColl(obj);
+		obj = heavy.getEnemy(2);
+		m_skell.enemyColl(obj);
+		obj = heavy.getEnemy(3);
+		m_skell.enemyColl(obj);
 
 		// Сам вивід всього на екран
 		m_window.display();
-		//draw(m_window);
+		
 	}
 }
 
@@ -113,120 +152,16 @@ void Engine::setPlayerView(float X, float Y)
 {
 	float tempX = X;
 	float tempY = Y;
-
+	
 	if (X < 640) { tempX = 640; }
 	if (Y > 600) { tempY = 600; }
 	//if (Y < 400) { tempY = 400; }
+
+	checkp.setPosition(tempX - 102 + resolution.x / 2, tempY + resolution.y / 2 - 30);
+	gameover.setPosition(tempX - 200, tempY);
+	life.setPosition(tempX - resolution.x / 2, tempY - resolution.y / 2);
+
+
 	view.setCenter(tempX, tempY);
 }
-
-// Взаємодія з об'єктами карти
-//void Engine::mapInteraction()
-//{
-//	// Координати гравця
-//	player.rect.top = m_skell.getpos_y();// -m_skell.getHeight() * m_skell.getScale();
-//	player.rect.left = m_skell.getpos_x();
-//	//m_skell.setpos(player.rect.left, player.rect.top);
-//	// Ініціалізація вектору об'єктів мапи
-//	
-//	vector<Object> obj = level.GetObjects("solid");
-//	
-//	for (int i = 0; i < obj.size(); i++)
-//	{
-//		
-//		if (player.rect.intersects(obj[i].rect))
-//		{
-//			if (obj[i].type == "ground")
-//			{
-//				
-//
-//				if (m_skell.m_Y > 0)
-//				{
-//					m_skell.setPosY(obj[i].rect.top - player.rect.height);
-//					m_skell.m_Y = 0;
-//					m_skell.m_onGround = true;
-//					m_skell.setGround(obj[i].rect.top);
-//				}
-//				if (m_skell.m_Y < 0)
-//				{
-//					m_skell.setPosY(obj[i].rect.top + obj[i].rect.height);
-//					m_skell.m_Y = 0;
-//					m_skell.m_onGround = false;
-//				}
-//				//cout << i << endl;
-//				if ((i > 0) && (i < obj.size()))
-//				{
-//					if (player.rect.intersects(obj[i + 1].rect))
-//					{
-//						cout << "i - 1 " << obj[i].rect.left << endl;
-//						if (m_skell.m_X > 0)
-//						{
-//							m_skell.setPosX(obj[i + 1].rect.left - player.rect.width);
-//							
-//						}
-//					}
-//					if (player.rect.intersects(obj[i - 1].rect))
-//					{
-//						if (m_skell.m_X < 0)
-//						{
-//							m_skell.setPosX(obj[i - 1].rect.left + obj[i - 1].rect.width);
-//							
-//						}
-//					}
-//				}
-//
-//
-//			}
-//			if (obj[i].type == "wall")
-//			{
-//				if (m_skell.m_X > 0)
-//				{
-//					m_skell.setPosX(obj[i].rect.left - player.rect.width);
-//					m_skell.m_X = 0;
-//				}
-//				if (m_skell.m_X < 0)
-//				{
-//					m_skell.setPosX(obj[i].rect.left + obj[i].rect.width);
-//					m_skell.m_X = 0;
-//				}
-//			}
-//		}
-//		/*cout << "player top " << player.rect.top << endl;
-//		cout << "obj top " << obj[i].rect.top << endl;*/
-//		//cout << "map_coll" << endl;
-//		//if (player.rect.left >= obj[i].rect.left)
-//		//{
-//		//	if (obj[i].type == "ground")
-//		//	{
-//		//		m_skell.setGround(obj[i].rect.top);// +obj[i].rect.height);
-//		//		//groundTop = obj[i].rect.top;
-//		//	}
-//		//}
-//		//
-//
-//		//if (player.rect.intersects(obj[i].rect))
-//		//{
-//		//	
-//		//	if (obj[i].type == "ground")
-//		//	{
-//		//		m_skell.setGround(obj[i].rect.top);// +obj[i].rect.height);
-//		//		m_skell.setPos(player.rect.left, obj[i].rect.top - m_skell.getHeight() * m_skell.getScale());
-//		//		
-//		//		//cout << "obj top " << player.rect.top << endl;
-//		//	}
-//		//	if (obj[i].type == "wall")
-//		//	{
-//		//		if (player.rect.left < obj[i].rect.left)
-//		//		{
-//		//			m_skell.setPos(obj[i].rect.left - m_skell.getWidth() * m_skell.getScale(), player.rect.top + m_skell.getHeight() * m_skell.getScale());
-//		//		}
-//		//		else
-//		//		{
-//		//			m_skell.setPos(obj[i].rect.left + obj[i].rect.width, player.rect.top + m_skell.getHeight() * m_skell.getScale());
-//		//		}
-//		//	}
-//		//}
-//	}
-//}
-
 

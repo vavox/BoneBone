@@ -23,12 +23,16 @@ private:
 	Vector2f resolution;
 	// Екземпляр класу гравця
 	skell m_skell;
-	Level level;
+	enemy heavy;
+	//Level level;
 	// Функцій вводу з клавіатури (управління), оновлення кадру та виводу на екран
 	void input();
 	/*void update(float _time);
 	void draw(RenderWindow& window);*/
-
+	Font font;
+	Text life;
+	Text gameover;
+	Text checkp;
 
 public:
 	// Конструктор класу рушія
@@ -41,6 +45,8 @@ public:
 	void setPlayerView(float X, float Y);
 
 	// Взаємодія з об'єктами карти
-	//void mapInteraction();
+	// Функції взаємодії з картою
+	/*void mapInteraction(float x, float y);
+	bool mapHelp();*/
 
 };

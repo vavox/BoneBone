@@ -27,36 +27,33 @@ bool Level::LoadFromFile(string filename)
 {
 	TiXmlDocument levelFile(filename.c_str());
 
-	// Загружаем XML-карту
+	// Завантаження XML-мапи
 	if (!levelFile.LoadFile())
 	{
 		cout << "Loading level \"" << filename << "\" failed." << endl;
 		return false;
 	}
 
-	// Работаем с контейнером map
+
 	TiXmlElement* map;
 	map = levelFile.FirstChildElement("map");
 
-	// Пример карты: <map version="1.0" orientation="orthogonal"
-	// width="10" height="10" tilewidth="34" tileheight="34">
 	width = atoi(map->Attribute("width"));
 	height = atoi(map->Attribute("height"));
 	tileWidth = atoi(map->Attribute("tilewidth"));
 	tileHeight = atoi(map->Attribute("tileheight"));
 
-	// Берем описание тайлсета и идентификатор первого тайла
 	TiXmlElement* tilesetElement;
 	tilesetElement = map->FirstChildElement("tileset");
 	firstTileID = atoi(tilesetElement->Attribute("firstgid"));
 
-	// source - путь до картинки в контейнере image
+
 	TiXmlElement* image;
 	image = map->FirstChildElement("tileset");
 	string imagepath = image->Attribute("source");
 	imagepath.erase(imagepath.end() - 4, imagepath.end());
 	cout << imagepath << endl;
-	// Пытаемся загрузить тайлсет
+	// Завантаження тайлсету
 	sf::Image img;
 
 	if (!img.loadFromFile("maps/" + imagepath + ".png"))
@@ -65,20 +62,20 @@ bool Level::LoadFromFile(string filename)
 		return false;
 	}
 
-	// Очищаем карту от света (109, 159, 185)
-	// Вообще-то в тайлсете может быть фон любого цвета, но я не нашел решения, как 16-ричную строку
-	// вроде "6d9fb9" преобразовать в цвет
+    // Очищення мапи від кольору
 	img.createMaskFromColor(Color(255, 255, 255));
-	// Грузим текстуру из изображения
+	
+	// Завантаження текстури
 	tilesetImage.loadFromImage(img);
+	
 	// Расплывчатость запрещена
 	tilesetImage.setSmooth(false);
 
-	// Получаем количество столбцов и строк тайлсета
+	// Кількість стовпчиків і рядків тайлсету
 	int columns = tilesetImage.getSize().x / tileWidth;
 	int rows = tilesetImage.getSize().y / tileHeight;
 
-	// Вектор из прямоугольников изображений (TextureRect)
+	// Вектор TextureRect
 	vector<Rect<int>> subRects;
 
 	for (int y = 0; y < rows; y++)
@@ -95,14 +92,14 @@ bool Level::LoadFromFile(string filename)
 			subRects.push_back(rect);
 		}
 	}
-	// Работа со слоями
+	
+	// Робота із прошарками
 	TiXmlElement* layerElement;
 	layerElement = map->FirstChildElement("layer");
 	while (layerElement)
 	{
 		Layer layer;
 
-		// Если присутствует opacity, то задаем прозрачность слоя, иначе он полностью непрозрачен
 		if (layerElement->Attribute("opacity") != NULL)
 		{
 			float opacity = strtod(layerElement->Attribute("opacity"), NULL);
@@ -122,7 +119,7 @@ bool Level::LoadFromFile(string filename)
 			cout << "Bad map. No layer information found." << endl;
 		}
 
-		// Контейнер <tile> - описание тайлов каждого слоя
+		// Контейнер <tile> - опис тайлів кожного шару
 		TiXmlElement* tileElement;
 		tileElement = layerDataElement->FirstChildElement("tile");
 
@@ -140,7 +137,7 @@ bool Level::LoadFromFile(string filename)
 			int tileGID = atoi(tileElement->Attribute("gid"));
 			int subRectToUse = tileGID - firstTileID;
 
-			// Устанавливаем TextureRect каждого тайла
+			// Зміщення по забраженню текстури кожного тайлу
 			if (subRectToUse >= 0)
 			{
 				Sprite sprite;
@@ -171,10 +168,10 @@ bool Level::LoadFromFile(string filename)
 		layerElement = layerElement->NextSiblingElement("layer");
 	}
 
-	// Работа с объектами
+	// Робота з об'єктами
 	TiXmlElement* objectGroupElement;
 
-	// Если есть слои объектов
+	// Якщо є шар об'єктів
 	if (map->FirstChildElement("objectgroup") != NULL)
 	{
 		objectGroupElement = map->FirstChildElement("objectgroup");
@@ -186,7 +183,6 @@ bool Level::LoadFromFile(string filename)
 
 			while (objectElement)
 			{
-				// Получаем все данные - тип, имя, позиция, etc
 				std::string objectType;
 				if (objectElement->Attribute("type") != NULL)
 				{
@@ -214,13 +210,12 @@ bool Level::LoadFromFile(string filename)
 				}
 				else
 				{
-					//cout << objectElement->Attribute("id") << endl;
 					width = subRects[atoi(objectElement->Attribute("id")) - firstTileID].width;
 					height = subRects[atoi(objectElement->Attribute("id")) - firstTileID].height;
 					sprite.setTextureRect(subRects[atoi(objectElement->Attribute("id")) - firstTileID]);
 				}
 
-				// Экземпляр объекта
+				// Екземпляр об'єкта
 				Object object;
 				object.name = objectName;
 				object.type = objectType;
@@ -233,7 +228,7 @@ bool Level::LoadFromFile(string filename)
 				objectRect.width = width;
 				object.rect = objectRect;
 
-				// "Переменные" объекта
+				// Характеристики об'єкту
 				TiXmlElement* properties;
 				properties = objectElement->FirstChildElement("properties");
 				if (properties != NULL)
@@ -254,7 +249,6 @@ bool Level::LoadFromFile(string filename)
 					}
 				}
 
-				// Пихаем объект в вектор
 				objects.push_back(object);
 
 				objectElement = objectElement->NextSiblingElement("object");
@@ -305,7 +299,7 @@ vector<Object> Level::GetAllObjects()
 };
 
 
-void Level::Draw(RenderWindow& window)
+void Level::Draw(RenderWindow &window)
 {
 	for (int layer = 0; layer < layers.size(); layer++)
 	{

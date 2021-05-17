@@ -10,6 +10,7 @@
 using namespace std;
 using namespace sf;
 
+// 
 struct Object
 {
     int GetPropertyInt(string name);
@@ -24,12 +25,14 @@ struct Object
     Sprite sprite;
 };
 
+// Прошарок(рівень) мапи
 struct Layer
 {
     int opacity;
     vector<Sprite> tiles;
 };
 
+// Клас мапи
 class Level
 {
 public: 

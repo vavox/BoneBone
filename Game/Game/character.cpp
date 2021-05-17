@@ -3,37 +3,40 @@
 */
 #include "character.h"
 #include <iostream>
-#include "map.h"
+
 
 using namespace std;
 Level level;
 Object player;
 
+
 skell::skell()
 {
 	// Швидкість гравця
-	m_speed = 400;
+	m_speed = 350; // 400 default
 
 	// Завантаження текстури
-	m_texture.loadFromFile("res/scott2.png");
+	m_texture.loadFromFile("res/skullMainTestNew.png");
 
 	// Створення спрайту з текстури
 	m_sprite.setTexture(m_texture);
 
 	// Висота та ширина спрайту гравця
-	m_pHeight = 126;
-	m_pWidth = 73;
-	m_pAnimBuff = 104;
+	m_pHeight = 130;
+	m_pWidth = 55;
+	m_pAnimBuff = 114;
 
-	// Значееня маcштабу (спрайту гравця)
-	m_pScale = 0.5f;
+	// Значеня маcштабу (спрайту гравця)
+	m_pScale = 1.f;
 
-	m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+	// Зміщення до фрагменту спрайту
+	m_sprite.setTextureRect(IntRect(0, 263, m_pAnimBuff, m_pHeight));
 	
 	// Маштаб спрайту
 	m_sprite.setScale(m_pScale, m_pScale);
 
-	//m_sprite.setOrigin(0, m_pHeight* m_pScale);
+
+	//m_sprite.setOrigin(0, (m_pWidth* m_pScale)/2);
 
 	// Позиція спрайту гравця в пікселях
 	level.LoadFromFile("maps/test3.tmx");
@@ -41,20 +44,23 @@ skell::skell()
 	player.sprite = getSprite();
 	setPosX(player.rect.left);
 	setPosY(player.rect.top + m_pHeight*m_pScale);
-	m_life = 300;
+	m_life = 100;
 	m_score = 0;
+
+	m_checkpointScore = 0;
 	// 
 	//m_groundlvl3= 600;
-	m_maxjump = 250;
+	m_maxjump = 400;//250;
 
 	// номер кадру
 	m_Frame = 1;
-	//m_onGround = true;
+	m_onGround = true;
 	m_onJump = false;
 	m_onGroundAnim = false;
 	m_X = 0;
 	m_Y = 0.1;
-	m_fall = true;
+	m_fall = false;
+	
 }
 
 // Функція для доступу до спрайту
@@ -97,53 +103,53 @@ void skell::animation(float _time)
 	{
 		if (m_right && !m_left)
 		{
-			m_Frame += 10 * _time;
+			m_Frame += 17 * _time;
 			//cout << "\nframe" <<_time<< endl;
-			if (m_Frame > 8) { m_Frame -= 7; }
-			m_sprite.setTextureRect(IntRect(109 * int(m_Frame), 8, m_pAnimBuff, m_pHeight));
+			if (m_Frame > 8) { m_Frame -= 8; }
+			m_sprite.setTextureRect(IntRect(115 * int(m_Frame), 0, m_pAnimBuff, m_pHeight));
 			m_sprite.move(0.1 * _time, 0);
-			//CurrnetFrame = 1;
-
+			//player.rect.width = m_pAnimBuff;
 		}
 		else if (m_left && !m_right)
 		{
-			m_Frame += 10 * _time;
+			m_Frame +=  17 * _time;
 			//cout << "\nframe" <<_time<< endl;
 			if (m_Frame > 8) { m_Frame -= 7; }
-			m_sprite.setTextureRect(IntRect(108 * int(m_Frame), 145, m_pAnimBuff, m_pHeight));
+			m_sprite.setTextureRect(IntRect(115 * int(m_Frame), 131, m_pAnimBuff, m_pHeight));
 			m_sprite.move(-0.1 * _time, 0);
-			//CurrnetFrame = 1;
-
+			//player.rect.width = m_pAnimBuff;
 		}
 		else
 		{
+			//player.rect.width = m_pWidth;
 			if (!m_right)
 			{
-				m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+				m_sprite.setTextureRect(IntRect(30, 263, 84, m_pHeight));
 			}
 			if (!m_left)
 			{
-				m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+				m_sprite.setTextureRect(IntRect(30, 263, 84, m_pHeight));
 			}
 			if (m_right && m_left)
 			{
-				m_sprite.setTextureRect(IntRect(15, 263, m_pWidth, m_pHeight));
+				m_sprite.setTextureRect(IntRect(30, 263, 84, m_pHeight));
 			}
 		}
 	}
 	if (m_onJump || !m_onGround)
 	{
+		//player.rect.width = m_pWidth;
 		if (m_right)
 		{
-			m_sprite.setTextureRect(IntRect(218, 8, m_pAnimBuff, m_pHeight));
+			m_sprite.setTextureRect(IntRect(231, 0, m_pAnimBuff, m_pHeight));
 		}
 		else if (m_left)
 		{
-			m_sprite.setTextureRect(IntRect(218, 145, m_pAnimBuff, m_pHeight));
+			m_sprite.setTextureRect(IntRect(231, 131, m_pAnimBuff, m_pHeight));
 		}
 		else
 		{
-			m_sprite.setTextureRect(IntRect(218, 8, m_pAnimBuff, m_pHeight));
+			m_sprite.setTextureRect(IntRect(231, 0, m_pAnimBuff, m_pHeight));
 		}
 		
 	}
@@ -153,7 +159,7 @@ void skell::animation(float _time)
 // Функція "Гравітації"
 void skell::fall(float _time)
 {
-	m_pos.y += 1.2 * m_speed * powf(_time, 0.656)* m_Y;
+	m_pos.y += 1.2 * (m_speed + 50.0) * powf(_time, 0.656)* m_Y;
 }
 
 
@@ -165,87 +171,75 @@ void skell::not_jump()
 // Функція оновлення кадру (відбувається рух персонажу гравця)
 void skell::update(float _time)
 {
+	if (m_life <= 0)
+	{
+		m_canMove = false;
+	}
+	//m_X = 0;
 	if (!m_fall)
 	{
-		m_canJump = true;
+		m_canJump = true;	
 	}
-	
-	
 
-	if (m_right)
-	{
-		m_X = 1;
-		m_pos.x += m_speed * _time * m_X;
-		
-	}
-	
-
-	if (m_left)
-	{  
-		m_X = -1;
-		m_pos.x += m_speed * _time * m_X;
-	
-	}
-	
-	if (m_space && m_onGround && m_canJump)
+	if (m_canMove)
 	{
 		if (m_right)
 		{
 			m_X = 1;
+			m_pos.x += m_speed * _time * m_X;
+
 		}
+
 		if (m_left)
 		{
 			m_X = -1;
+			m_pos.x += m_speed * _time * m_X;
+
 		}
-		m_onJump = true;
-		m_onGroundAnim = false;
-		m_fall = true;  
 		
-		m_pos.y -= 1.2*m_speed * powf(_time, 0.987);
-		m_Y = -0.1;
-		if (m_pos.y < m_groundlvl - m_maxjump)
+		if (m_space && m_onGround && m_canJump)
 		{
-			cout << m_groundlvl - m_maxjump << endl;
-			m_onGround = false;
+			m_onJump = true;
+			m_onGroundAnim = false;
+			m_fall = true;
+
+			m_pos.y -= 1.2 * (m_speed + 50.0) * powf(_time, 0.987);
+			m_Y = -0.1;
+			if (m_pos.y < m_groundlvl - m_maxjump)
+			{
+				m_onGround = false;
+				m_canJump = false;
+			}
+		}
+		else
+		{
 			m_canJump = false;
 		}
-		
 	}
-	else
-	{
-		m_canJump = false;
-	}
+	
 	
 	
 	//cout << "time: " << _time << endl;
 	animation(_time);
 	
-	//m_onGround = true;
-	
 	if (m_onGround)
 	{
 		m_onJump = false;
-		//cout << m_onGround << "|| j " << m_onJump << endl;
+		m_canMove = true;
 	}
 	
 	if ((m_pos.x + m_pWidth * m_pScale < m_groundleft) || (m_pos.x > m_groundright))
 	{
-	
 		if (!m_fall)
 		{
 			m_Y = 0.01;  
 		}
 		m_fall = true;
 		m_onJump = true;
-		
-	}
-	m_Y = m_Y + _time * 0.95;
-
-	if (!m_onGroundAnim || m_onJump)
-	{
-		m_X = 0; 
+		m_X = 0;		
 	}
 	
+	m_Y = m_Y + _time * 0.95;
 	if (m_Y > 10)
 	{
 		m_Y = 10;
@@ -257,23 +251,28 @@ void skell::update(float _time)
 	{
 		m_pos.y = m_groundlvl - m_pHeight * m_pScale;
 	}
-
+	/*okrema function yaka pereviryaye chi intersects z object pered perevirkoyu X, yakshco intersects po Y v mezhah objecta to m_X = 0*/
+	
+	if (mapHelp())
+	{
+		m_X = 0;
+	}
+	
 	mapInteraction(m_X, 0);
-	cout << "m_Y " << m_Y << endl;
-	cout << "m_X " << m_X << endl;
-	mapInteraction(0, m_Y);
 
+	mapInteraction(0, m_Y);
 
 	// Зміна позиції спрайту
 	m_sprite.setPosition(m_pos.x, m_pos.y);
-	
 	
 	m_score += 1;
 		
 }
 
-
-
+int skell::getLife()
+{
+	return m_life;
+}
 
 float skell::getpos_y()
 {
@@ -293,7 +292,6 @@ void skell::setPosY(float y)
 {
 	m_pos.y = y;
 }
-
 
 void skell::setGround(float tmp)
 {
@@ -320,9 +318,130 @@ float skell::getGround()
 	return m_groundlvl;
 }
 
+bool skell::getCanMove()
+{
+	return m_canMove;
+}
+
 void skell::setBools(bool tmp)
 {
 	m_onGround = tmp;
+}
+
+void skell::setLife(int newLife)
+{
+	m_life = newLife;
+}
+
+void skell::drawlevel(RenderWindow& window)
+{
+	level.Draw(window);
+}
+
+void skell::toCheckpoint()
+{
+	m_life = 100;
+	setPosX(m_checkpointPos.x);
+	setPosY(m_checkpointPos.y);
+	m_score = m_checkpointScore;
+}
+
+bool skell::checkpoint()
+{
+	vector<Object> obj = level.GetObjects("checkpoint");
+	for (int i = 0; i < obj.size(); i++)
+	{
+		
+		if (player.rect.intersects(obj[i].rect))
+		{
+			//cout << "checkpoint passed\n";
+			//m_checkpointLife = m_life;
+			m_checkpointScore = m_score;
+			m_checkpointPos.x = obj[i].rect.left + obj[i].rect.width + 1;
+			m_checkpointPos.y = m_pos.y;
+			/*cout << m_checkpointPos.x << " " << m_checkpointPos.y << endl;*/
+			return true;
+		}
+		
+	}
+	return false;
+}
+
+float skell::enemyAmount(string enemyType)
+{
+	vector<Object> obj = level.GetObjects("enemy");
+	int temp = 0;
+
+	for (int i = 0; i < obj.size(); i++)
+	{
+		if (obj[i].type == enemyType)
+		{
+			temp++;
+		}
+	}
+	return temp;
+}
+
+void skell::enemyColl(vector<Object>& obj)
+{
+	for (int i = 0; i < obj.size(); i++)
+	{
+		if (player.rect.intersects(obj[i].rect))
+		{
+			
+			m_life -= 10;
+			if (m_pos.x > obj[i].rect.left)
+			{
+				m_pos.x += 50;
+				m_canMove = false;
+			}
+			if (m_pos.x < obj[i].rect.left)
+			{
+				m_pos.x -= 50;
+				m_canMove = false;
+			}
+		}
+	}
+}
+
+bool skell::mapHelp()
+{
+	player.rect.top = m_pos.y;
+	player.rect.left = m_pos.x;
+	// Ініціалізація вектору об'єктів мапи
+	
+	vector<Object> obj = level.GetAllObjects();
+	//vector<Object> tmp = level.GetObjects("notX");
+	for (int i = 0; i < obj.size(); i++)
+	{
+		if (obj[i].name == "solid")
+		{
+			if (player.rect.intersects(obj[i].rect))
+			{
+				if (((player.rect.left + player.rect.width) > obj[i].rect.left + player.rect.width / 3) && (player.rect.left < obj[i].rect.left + obj[i].rect.width - player.rect.width / 3))
+				{
+					if (player.rect.top + player.rect.height > obj[i].rect.top) { return true; }
+				}
+			}
+		}
+		if (obj[i].name == "notX")
+		{
+			if (player.rect.intersects(obj[i].rect))
+			{
+				if (m_right) { m_X = 1; }
+				if (m_left) { m_X = -1; }
+				return false;
+			}
+		}
+		if (obj[i].name == "ur_dead")
+		{
+			if (player.rect.intersects(obj[i].rect))
+			{
+				m_life = 0;
+			}
+		}
+	}
+	return false;
 }
 
 void skell::mapInteraction(float x, float y)
@@ -337,55 +456,50 @@ void skell::mapInteraction(float x, float y)
 
 	for (int i = 0; i < obj.size(); i++)
 	{
+		
 		if (player.rect.intersects(obj[i].rect))
 		{
+		
 			if (obj[i].type == "ground")
 			{
-
-				
-				//m_Y = round(m_Y);
-				
 				if ((y > 0))
 				{
-					
 					setPosY(obj[i].rect.top - player.rect.height);
-					
+
 					m_Y = 0;
 					m_onGround = true;
 					m_onGroundAnim = true;
 					m_fall = false;
 					m_groundleft = obj[i].rect.left;
 					m_groundright = obj[i].rect.left + obj[i].rect.width;
+					m_canMove = true;
 					setGround(obj[i].rect.top);
-					
-					//cout << "Player top " << player.rect.top << "\nPlayer top + height - " << player.rect.top + player.rect.height << "\nObject top - " << obj[i].rect.top << endl;
-					
 				}
 				if (y < 0)
 				{
-					setPosY(obj[i].rect.top + obj[i].rect.height);
-					//setPosY(obj[i].rect.top + player.rect.height);
-					m_onGround = false;
-					//m_X = 0;
-					m_Y = 0;
+					if (player.rect.top + player.rect.height > obj[i].rect.top + obj[i].rect.height)
+					{
+						setPosY(obj[i].rect.top + obj[i].rect.height);
+						m_onGround = false;
+						m_Y = 0;
+					}
+
 				}
-				
+				if ((player.rect.top + player.rect.height >= obj[i].rect.top + obj[i].rect.height))
+				{
+					if ((player.rect.left + player.rect.width > obj[i].rect.left) || (player.rect.left < obj[i].rect.left + obj[i].rect.width))
+					{
+						if (m_Y < 0) { x = 0; }
+					}
+				}
+
 				if (x > 0)
 				{
-
-					
 					setPosX(obj[i].rect.left - player.rect.width);
-					m_X = 0;
-					
 				}
 				if (x < 0)
 				{
-					
 					setPosX(obj[i].rect.left + obj[i].rect.width);
-					m_X = 0;
-					
-					
-
 				}
 			}
 
@@ -401,9 +515,262 @@ void skell::mapInteraction(float x, float y)
 					setPosX(obj[i].rect.left + obj[i].rect.width);
 					m_X = 0;
 				}
-				
+
 			}
 		}
+	}
 		
+	
+}
+
+
+enemy::enemy()
+{
+	// Швидкість гравця
+	e_speed_heavy = 200;
+	e_speed_fly = 150; // 400 default
+	
+	// Клас Ворогу
+	vector<Object> e_enemy = level.GetObjects("enemy");
+	cout << e_enemy.size() << endl;
+
+	// Позиція спрайту гравця в пікселях
+	for(int i = 0; i < e_enemy.size(); i++)
+	{
+		if (e_enemy[i].type == "heavy")
+		{
+			heavy.push_back(e_enemy[i]);
+		}
+
+		if (e_enemy[i].type == "range")
+		{
+			range.push_back(e_enemy[i]);
+		}
+
+		if (e_enemy[i].type == "fly")
+		{
+			fly.push_back(e_enemy[i]);
+		}
+
+	}
+	j = 0;
+	start();
+	//m_sprite.setOrigin(m_pWidth * m_pScale, m_pHeight* m_pScale);
+}
+
+Sprite enemy::getSprite()
+{
+	return e_sprite_heavy;
+}
+
+void enemy::start()
+{
+	for (int i = 0; i < heavy.size(); i++)
+	{
+		e_pos.x = heavy[i].rect.left;
+		e_pos.y = heavy[i].rect.top;
+		
+		// Висота та ширина спрайту гравця
+		e_pHeight = heavy[i].rect.height;
+		e_pWidth = heavy[i].rect.width;
+		e_pAnimBuff = heavy[i].rect.width;
+
+		// Завантаження текстури
+		e_texture_heavy.loadFromFile("res/heavy.png");
+		e_sprite_heavy.setTexture(e_texture_heavy);
+		e_sprite_heavy.setTextureRect(IntRect(0, 0, e_pWidth, e_pHeight));
+		e_sprite_heavy.setPosition(e_pos.x, e_pos.y);
+		// Значееня маcштабу (спрайту гравця)
+		e_pScale = 1.f;
+
+		// Маштаб спрайту
+		e_sprite_heavy.setScale(e_pScale, e_pScale);
+		heavy[i].sprite = e_sprite_heavy;
+	}
+
+	for (int i = 0; i < range.size(); i++)
+	{
+		e_pos.x = range[i].rect.left;
+		e_pos.y = range[i].rect.top;
+
+		// Висота та ширина спрайту гравця
+		e_pHeight = range[i].rect.height;
+		e_pWidth = range[i].rect.width;
+		e_pAnimBuff = range[i].rect.width;
+
+		// Завантаження текстури
+		e_texture_range.loadFromFile("res/red_bob.png");
+		e_sprite_range.setTexture(e_texture_range);
+		e_sprite_range.setTextureRect(IntRect(10, 0, e_pWidth, e_pHeight));
+		e_sprite_range.setPosition(e_pos.x, e_pos.y);
+		// Значееня маcштабу (спрайту гравця)
+		e_pScale = 1.f;
+
+		// Маштаб спрайту
+		e_sprite_range.setScale(e_pScale, e_pScale);
+		range[i].sprite = e_sprite_range;
+	}
+
+	for (int i = 0; i < fly.size(); i++)
+	{
+		e_pos.x = fly[i].rect.left;
+		e_pos.y = fly[i].rect.top;
+
+		// Висота та ширина спрайту гравця
+		e_pHeight = fly[i].rect.height;
+		e_pWidth = fly[i].rect.width;
+		e_pAnimBuff = fly[i].rect.width;
+
+		// Завантаження текстури
+		e_texture_fly.loadFromFile("res/skullhead_small.png");
+		e_sprite_fly.setTexture(e_texture_fly);
+		e_sprite_fly.setTextureRect(IntRect(0, 0, e_pWidth, e_pHeight));
+		e_sprite_fly.setPosition(e_pos.x, e_pos.y);
+		// Значееня маcштабу (спрайту гравця)
+		e_pScale = 1.f;
+
+		// Маштаб спрайту
+		e_sprite_fly.setScale(e_pScale, e_pScale);
+		fly[i].sprite = e_sprite_fly;
+	}
+	
+}
+
+void enemy::rangeAttack(float _time)
+{
+
+}
+
+void enemy::flyMove(float _time)
+{
+	int tmp = 1;
+	for (int i = 0; i < fly.size(); i++)
+	{
+		j ++;
+		fly[i].rect.left -= 2 *e_speed_fly * _time;
+		if (j > 2)
+		{
+			tmp *= -1;
+			j = 0;
+		}
+
+		//fly[i].rect.top += tmp  * e_speed_fly * _time;
+		fly[i].sprite.setPosition(fly[i].rect.left, fly[i].rect.top);
+	}
+}
+
+void enemy::heavyMove(float _time)
+{
+	vector<Object> obj = level.GetObjects("solid");
+	for (int i = 0; i < heavy.size(); i++)
+	{
+
+		moveTimer += _time;
+		if (moveTimer > 2)
+		{
+			e_speed_heavy *= -1;
+			moveTimer = 0;
+		}
+		
+		if (e_speed_heavy < 0)
+		{
+			e_left = true;
+		}
+		else
+		{
+			e_left = false;
+		}
+
+		
+		heavy[i].rect.left += e_speed_heavy * _time;
+		for (int k = 0; k < obj.size(); k++)
+		{
+			if (heavy[i].rect.intersects(obj[k].rect))
+			{
+				if (e_left)
+				{
+					heavy[i].rect.left = obj[k].rect.left + obj[k].rect.width;
+				}
+				else
+				{
+					heavy[i].rect.left = obj[k].rect.left - heavy[i].rect.width;
+				}
+			}
+		}
+		heavy[i].sprite.setPosition(heavy[i].rect.left, heavy[i].rect.top);
+	}
+}
+
+
+
+void enemy::draw(RenderWindow& window)
+{
+	for (int i = 0; i < heavy.size(); i++)
+	{
+		window.draw(heavy[i].sprite);
+	}
+	for (int i = 0; i < range.size(); i++)
+	{
+		window.draw(range[i].sprite);
+	}
+	for (int i = 0; i < fly.size(); i++)
+	{
+		window.draw(fly[i].sprite);
+	}
+}
+
+void enemy::update(float _time)
+{
+	animation(_time);
+	heavyMove(_time);	
+	flyMove(_time);
+}
+
+void enemy::animation(float _time)
+{
+	for (int i = 0; i < heavy.size(); i++)
+	{
+		if (e_left)
+		{
+			e_Frame += 5 * _time;
+			//cout << "\nframe" <<_time<< endl;
+			if (e_Frame > 3) { e_Frame -= 3; }
+			e_sprite_heavy.setTextureRect(IntRect(96 * int(e_Frame), 0, heavy[i].rect.width, heavy[i].rect.height));
+			e_sprite_heavy.move(0.1 * _time, 0);
+		}
+		else
+		{
+			e_Frame += 5 * _time;
+			//cout << "\nframe" <<_time<< endl;
+			if (e_Frame > 3) { e_Frame -= 3; }
+			e_sprite_heavy.setTextureRect(IntRect(96 * int(e_Frame), 0 + heavy[i].rect.height , heavy[i].rect.width, heavy[i].rect.height));
+			e_sprite_heavy.move(0.1 * _time, 0);
+		}
+		heavy[i].sprite = e_sprite_heavy;
+	}
+	
+}
+
+vector<Object> enemy::getEnemy(int type)
+{
+	switch (type)
+	{
+	case 1: 
+		if (!heavy.empty())
+		{
+			return heavy;
+		}
+	case 2:
+		if (!range.empty())
+		{
+			return range;
+		}
+	case 3:
+		if (!fly.empty())
+		{
+			return fly;
+		}
+	default:
+		return {};
 	}
 }
