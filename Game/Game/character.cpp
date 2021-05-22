@@ -60,6 +60,9 @@ skell::skell()
 	m_X = 0;
 	m_Y = 0.1;
 	m_fall = false;
+
+	m_range = false;
+	m_melee = false;
 	
 }
 
@@ -95,6 +98,27 @@ void skell::stopright()
 	m_right = false;
 }
 
+void skell::rangeAttack()
+{
+	m_range = true;
+}
+
+void skell::notAttack()
+{
+	m_range = false;
+	m_melee = false;
+}
+
+void skell::meleeAtack()
+{
+	m_melee = false;
+}
+
+bool skell::getAttack()
+{
+	if (m_range || m_melee) { return true; }
+	else { return false; }
+}
 // Функція роботи анімації
 void skell::animation(float _time)
 {
@@ -336,6 +360,12 @@ void skell::setLife(int newLife)
 void skell::drawlevel(RenderWindow& window)
 {
 	level.Draw(window);
+
+}
+
+void skell::drawlevelbylayer(RenderWindow& window, int layer)
+{
+	level.DrawByLayer(window, layer);
 }
 
 void skell::toCheckpoint()
@@ -367,21 +397,6 @@ bool skell::checkpoint()
 	return false;
 }
 
-float skell::enemyAmount(string enemyType)
-{
-	vector<Object> obj = level.GetObjects("enemy");
-	int temp = 0;
-
-	for (int i = 0; i < obj.size(); i++)
-	{
-		if (obj[i].type == enemyType)
-		{
-			temp++;
-		}
-	}
-	return temp;
-}
-
 void skell::enemyColl(vector<Object>& obj)
 {
 	for (int i = 0; i < obj.size(); i++)
@@ -389,7 +404,7 @@ void skell::enemyColl(vector<Object>& obj)
 		if (player.rect.intersects(obj[i].rect))
 		{
 			
-			m_life -= 10;
+			m_life -= 100;
 			if (m_pos.x > obj[i].rect.left)
 			{
 				m_pos.x += 50;
@@ -554,6 +569,7 @@ enemy::enemy()
 
 	}
 	j = 0;
+	e_type = 3;
 	start();
 	//m_sprite.setOrigin(m_pWidth * m_pScale, m_pHeight* m_pScale);
 }
@@ -707,15 +723,24 @@ void enemy::draw(RenderWindow& window)
 {
 	for (int i = 0; i < heavy.size(); i++)
 	{
-		window.draw(heavy[i].sprite);
+		if (!heavy.empty())
+		{
+			window.draw(heavy[i].sprite);
+		}
 	}
 	for (int i = 0; i < range.size(); i++)
 	{
-		window.draw(range[i].sprite);
+		if (!range.empty())
+		{
+			window.draw(range[i].sprite);
+		}
 	}
 	for (int i = 0; i < fly.size(); i++)
 	{
-		window.draw(fly[i].sprite);
+		if (!fly.empty())
+		{
+			window.draw(fly[i].sprite);
+		}
 	}
 }
 
@@ -773,4 +798,52 @@ vector<Object> enemy::getEnemy(int type)
 	default:
 		return {};
 	}
+}
+
+bool enemy::combatColl(Object obj)
+{
+	vector<Object> enemTemp;
+	vector<Object> allobj = level.GetObjects("solid");
+	for (int i = 0; i < e_type; i++)
+	{
+		
+		enemTemp = getEnemy(i + 1);
+		if (enemTemp.empty())
+		{
+			return false;
+		}
+		for (int l = 0; l < enemTemp.size(); l++)
+		{
+			if (obj.rect.intersects(enemTemp[l].rect))
+			{
+				switch (i)
+				{
+				case 0:
+					heavy.erase(heavy.begin() + l);
+					return true;
+					//break;
+				case 1:
+					range.erase(range.begin() + l);
+					return true;
+					//break;
+				case 2:
+					fly.erase(fly.begin() + l);
+					return true;
+					//break;
+				default:
+					break;
+				}
+
+			}
+		}
+		for (int k = 0; k < allobj.size(); k++)
+		{
+			if (obj.rect.intersects(allobj[k].rect))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

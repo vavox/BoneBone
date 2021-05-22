@@ -309,4 +309,12 @@ void Level::Draw(RenderWindow &window)
 		}
 	}
 }
+
+void Level::DrawByLayer(RenderWindow& window, int layer)
+{
+	for (int tile = 0; tile < layers[layer].tiles.size(); tile++)
+	{
+		window.draw(layers[layer].tiles[tile]);
+	}
+}
 /**/

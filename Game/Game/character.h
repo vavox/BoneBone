@@ -36,7 +36,10 @@ private:
 	bool m_space;
 	bool m_onGroundAnim;
 	bool m_canMove;
-
+	bool m_range;
+	bool m_melee;
+	
+	
 	// Кількість очків життя та загальний рахунок очків
 	int m_life; 
 	int m_score; 
@@ -86,6 +89,9 @@ public:
 	void stopright();
 	void jump();
 	void not_jump();
+	void rangeAttack();
+	void notAttack();
+	void meleeAtack();
 	void fall(float _time);
 
 	// Функція роботи з анімацією
@@ -102,6 +108,7 @@ public:
 	float getGround();
 	void setBools(bool tmp);
 	bool getCanMove();
+	bool getAttack();
 	//Віддзеркалення спрайту
 	//void setRot();
 	// Встановлення координат гравця та рівня землі
@@ -109,6 +116,7 @@ public:
 	void setPosY(float y);
 	void setGround(float tmp);
 	void drawlevel(RenderWindow& window);
+	void drawlevelbylayer(RenderWindow& window, int layer);
 	// Функіця оновлення кадру
 	void update(float _time);
 
@@ -118,7 +126,7 @@ public:
 	bool checkpoint();
 	void enemyColl(vector<Object> &obj);
 
-	float enemyAmount(string enemyType);
+	
 	// Функція повернення на чекпоінт
 	void toCheckpoint();
 	
@@ -159,6 +167,7 @@ private:
 	float e_pHeight;
 	float e_pWidth;
 
+	
 
 	float moveTimer;
 
@@ -176,6 +185,8 @@ public:
 	void heavyMove(float _time);
 	void rangeAttack(float _time);
 	void flyMove(float _time);
+
+	bool combatColl(Object obj);
 
 	vector<Object> getEnemy(int type);
 };

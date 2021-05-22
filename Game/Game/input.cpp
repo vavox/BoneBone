@@ -53,5 +53,26 @@ void Engine::input()
 		{
 			m_skell.not_jump();
 		}
+
+		if (!m_skell.getAttack())
+		{
+			if (Keyboard::isKeyPressed(Keyboard::K))
+			{
+				m_skell.rangeAttack();
+				combatInit();
+			}
+			else
+			{
+				//m_skell.notAttack();
+			}
+		}
+		if (Keyboard::isKeyPressed(Keyboard::L))
+		{
+			cout << "L is pressed \n";
+		}
+		else
+		{
+			cout << "L isn`t pressed \n";
+		}
 	}
 }

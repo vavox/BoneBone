@@ -40,6 +40,7 @@ public:
     Object GetObject(string name);
     vector<Object> GetObjects(string name);
     void Draw(RenderWindow& window);
+    void DrawByLayer(RenderWindow& window, int layer);
     Vector2i GetTileSize();
     vector<Object> GetAllObjects();
 private:

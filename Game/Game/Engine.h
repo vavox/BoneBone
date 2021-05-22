@@ -23,7 +23,7 @@ private:
 	Vector2f resolution;
 	// Екземпляр класу гравця
 	skell m_skell;
-	enemy heavy;
+	enemy e_enem;
 	//Level level;
 	// Функцій вводу з клавіатури (управління), оновлення кадру та виводу на екран
 	void input();
@@ -44,6 +44,12 @@ public:
 	// Камера
 	void setPlayerView(float X, float Y);
 
+	void menu(RenderWindow& window);
+
+	
+
+	void combatInit();
+	void combatSystem(float _time);
 	// Взаємодія з об'єктами карти
 	// Функції взаємодії з картою
 	/*void mapInteraction(float x, float y);
