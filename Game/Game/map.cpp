@@ -68,7 +68,6 @@ bool Level::LoadFromFile(string filename)
 	// Завантаження текстури
 	tilesetImage.loadFromImage(img);
 	
-	// Расплывчатость запрещена
 	tilesetImage.setSmooth(false);
 
 	// Кількість стовпчиків і рядків тайлсету
@@ -275,6 +274,18 @@ Object Level::GetObject(string name)
 	}
 }
 
+
+Vector2i Level::GetTileSize()
+{
+	return Vector2i(tileWidth, tileHeight);
+}
+
+vector<Object> Level::GetAllObjects()
+{
+	return objects;
+};
+
+
 vector<Object> Level::GetObjects(string name)
 {
 	vector<Object> vec;
@@ -287,17 +298,6 @@ vector<Object> Level::GetObjects(string name)
 	}
 	return vec;
 }
-
-Vector2i Level::GetTileSize()
-{
-	return Vector2i(tileWidth, tileHeight);
-}
-
-vector<Object> Level::GetAllObjects()
-{
-	return objects;
-};
-
 
 void Level::Draw(RenderWindow &window)
 {

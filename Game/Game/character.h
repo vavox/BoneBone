@@ -40,6 +40,7 @@ private:
 	bool m_melee;
 	
 	
+	
 	// Кількість очків життя та загальний рахунок очків
 	int m_life; 
 	int m_score; 
@@ -129,7 +130,13 @@ public:
 	
 	// Функція повернення на чекпоінт
 	void toCheckpoint();
+
+	void loadMap(String name);
 	
+	bool draw1st;
+	bool draw2nd;
+	bool draw3d;
+	bool drawall;
 };
 
 class enemy

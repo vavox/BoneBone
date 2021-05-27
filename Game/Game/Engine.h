@@ -2,6 +2,8 @@
 Файл з оголошенням класу рушія
 */
 #pragma once
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include "character.h"
 #include "map.h"
@@ -24,15 +26,23 @@ private:
 	// Екземпляр класу гравця
 	skell m_skell;
 	enemy e_enem;
-	//Level level;
-	// Функцій вводу з клавіатури (управління), оновлення кадру та виводу на екран
-	void input();
-	/*void update(float _time);
-	void draw(RenderWindow& window);*/
+
+
 	Font font;
 	Text life;
-	Text gameover;
+	Text gameover[2];
 	Text checkp;
+
+	// Menu
+	int menuElem;
+	int currentMenuElem;
+	bool toLevel;
+	bool info;
+	bool menuStart;
+	Text menu[3];
+	Text infoT;
+	Text hp;
+	Text layerInf;
 
 public:
 	// Конструктор класу рушія
@@ -41,18 +51,22 @@ public:
 	// Функція для виклику приватних функій класу рушія
 	void start();
 
+	// Функцій вводу з клавіатури (управління)
+	void input();
+
 	// Камера
 	void setPlayerView(float X, float Y);
 
-	void menu(RenderWindow& window);
-
-	
-
+	// Menu
+	void menuInit();
+	void menuDraw(RenderWindow& window);
+	void menuMoveUp();
+	void menuMoveDown();
+	void menuEnter();
+	void menuInfo();
+	// Combat system
 	void combatInit();
 	void combatSystem(float _time);
-	// Взаємодія з об'єктами карти
-	// Функції взаємодії з картою
-	/*void mapInteraction(float x, float y);
-	bool mapHelp();*/
 
+	void initWorld();
 };
