@@ -79,7 +79,7 @@ void Engine::start()
 	gameover[0].setCharacterSize(64);
 	gameover[0].setFillColor(Color::Red);
 	gameover[0].setOutlineColor(Color::Black);
-	gameover[0].setString("U`r dead!");
+	gameover[0].setString("Press R to restart");
 	gameover[1].setCharacterSize(64);
 	gameover[1].setFillColor(Color::White);
 	gameover[1].setOutlineColor(Color::Black);
@@ -213,8 +213,8 @@ void Engine::setPlayerView(float X, float Y)
 	if (Y > 1250) { tempY = 1250; }
 
 	checkp.setPosition(tempX - 102 + resolution.x / 2, tempY + resolution.y / 2 - 30);
-	gameover[0].setPosition(tempX - 200, tempY);
-	gameover[1].setPosition(tempX - 350, tempY);
+	gameover[0].setPosition(tempX - 450, tempY);
+	gameover[1].setPosition(tempX - 400, tempY);
 
 	hp.setPosition(tempX - resolution.x / 2, tempY - resolution.y / 2);
 	life.setPosition(tempX  + 250 - resolution.x / 2, tempY - resolution.y / 2);

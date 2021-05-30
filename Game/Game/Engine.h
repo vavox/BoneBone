@@ -6,7 +6,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include "character.h"
-#include "map.h"
+//#include "map.h"
 
 
 
